@@ -12,6 +12,7 @@ import * as mongoose from "mongoose";
 import * as passport from "passport";
 import * as expressValidator from "express-validator";
 import * as bluebird from "bluebird";
+import { soap, createWsdl } from "soap-decorators";
 
 const MongoStore = mongo(session);
 
@@ -20,6 +21,7 @@ dotenv.config({ path: ".env.example" });
 
 // Controllers (route handlers)
 import * as userController from "./controllers/user";
+import { BankController } from "./controllers/bank";
 
 // API keys and Passport configuration
 import * as passportConfig from "./config/passport";
@@ -29,6 +31,7 @@ const app = express();
 
 // Connect to MongoDB
 const mongoUrl = process.env.MONGOLAB_URI;
+console.log(mongoUrl);
 (<any>mongoose).Promise = bluebird;
 mongoose.connect(mongoUrl, {useMongoClient: true}).then(
   () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
@@ -78,6 +81,10 @@ app.use((req, res, next) => {
 });
 app.use(express.static(path.join(__dirname, "public"), { maxAge: 31557600000 }));
 
+console.log(createWsdl(BankController));
+const bankController = new BankController();
+
+app.use("/soap/bank", soap(bankController));
 /**
  * Primary app routes.
  */
