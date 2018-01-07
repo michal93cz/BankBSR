@@ -30,10 +30,11 @@ import * as passportConfig from "./config/passport";
 const app = express();
 
 // Connect to MongoDB
+const bankDatabaseName = "BankBSR";
 const mongoUrl = process.env.MONGOLAB_URI;
-console.log(mongoUrl);
+console.log(mongoUrl + "/" + bankDatabaseName);
 (<any>mongoose).Promise = bluebird;
-mongoose.connect(mongoUrl, {useMongoClient: true}).then(
+mongoose.connect(mongoUrl + "/" + bankDatabaseName, {useMongoClient: true}).then(
   () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
 ).catch(err => {
   console.log("MongoDB connection error. Please make sure MongoDB is running. " + err);
@@ -81,7 +82,6 @@ app.use((req, res, next) => {
 });
 app.use(express.static(path.join(__dirname, "public"), { maxAge: 31557600000 }));
 
-console.log(createWsdl(BankController));
 const bankController = new BankController();
 
 app.use("/soap/bank", soap(bankController));

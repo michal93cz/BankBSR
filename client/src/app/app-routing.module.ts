@@ -1,10 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { WeatherComponent } from './weather/weather.component';
+import { AtmComponent } from './atm/atm.component';
+import { LoginComponent } from './login/login.component';
 
 const routes: Routes = [
-  { path: 'weather', component: WeatherComponent }
+  { path: 'atm', component: AtmComponent },
+  { path: 'login', component: LoginComponent },
+  { path: '**', redirectTo: '/', pathMatch: 'full'}
 ];
 
 @NgModule({

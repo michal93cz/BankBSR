@@ -14,15 +14,15 @@ import {
 
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
-import { WeatherComponent } from './weather/weather.component';
 import { AppRoutingModule } from './app-routing.module';
+import { AtmComponent } from './atm/atm.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    WeatherComponent
+    AtmComponent
   ],
   imports: [
     HttpClientModule,
