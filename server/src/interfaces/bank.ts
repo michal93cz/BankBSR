@@ -4,16 +4,22 @@ import { XSDComplexType, XSDElement } from "soap-decorators";
 export class TransferInput {
 
   @XSDElement
-  accountFromNumber: string;
+  source_account: string;
 
   @XSDElement
-  accountToNumber: string;
+  destination_account: string;
 
   @XSDElement
   title: string;
 
   @XSDElement
   amount: number;
+
+  @XSDElement
+  source_name: string;
+
+  @XSDElement
+  destination_name: string;
 }
 
 @XSDComplexType
@@ -40,8 +46,11 @@ export class WithdrawInput {
 export class OperationResult {
 
   @XSDElement
-  status: string;
+  status: boolean;
 
   @XSDElement
-  currentBalance: number;
+  message?: string;
+
+  @XSDElement
+  currentBalance?: number;
 }

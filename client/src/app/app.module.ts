@@ -16,13 +16,15 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AtmComponent } from './atm/atm.component';
+import { TransferComponent } from './transfer/transfer.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    AtmComponent
+    AtmComponent,
+    TransferComponent
   ],
   imports: [
     HttpClientModule,
