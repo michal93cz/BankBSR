@@ -62,8 +62,6 @@ export class BankController {
   transfer(data: TransferInput, res: (res: OperationResult) => any): void {
     restBankController.postOutputTransfer(data)
     .then((reponseBody) => {
-      console.log("Data: ");
-      console.log(data);
       const promise = BankAccount.findOne({ number: data.source_account }).exec();
 
       promise.then((doc: BankAccountModel) => {
