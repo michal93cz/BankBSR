@@ -1,0 +1,50 @@
+{
+    "_id" : ObjectId("5a53b1c97b17121789c3edf6"),
+    "number" : "2345346",
+    "balance" : 950,
+    "history" : [ 
+        {
+            "operationType" : "TRANSFER",
+            "title" : "title1",
+            "amount" : -50,
+            "balanceAfter" : 950,
+            "_id" : ObjectId("5a588a313377556c4a8eb4b4"),
+            "date" : ISODate("2018-01-12T10:13:05.184Z")
+        }
+    ],
+    "__v" : 123
+}
+
+{
+    "_id" : ObjectId("5a53f80807636f239aa68473"),
+    "number" : "372367",
+    "balance" : 2900,
+    "history" : [ 
+        {
+            "operationType" : "TRANSFER",
+            "amount" : 50,
+            "balanceAfter" : 2800,
+            "_id" : ObjectId("5a58893a3377556c4a8eb4b1"),
+            "date" : ISODate("2018-01-12T10:08:58.654Z")
+        }, 
+        {
+            "operationType" : "TRANSFER",
+            "anotherAccountNumber" : "2345346",
+            "title" : "title1",
+            "amount" : 50,
+            "balanceAfter" : 2850,
+            "_id" : ObjectId("5a588a063377556c4a8eb4b2"),
+            "date" : ISODate("2018-01-12T10:12:22.422Z")
+        }, 
+        {
+            "operationType" : "TRANSFER",
+            "anotherAccountNumber" : "2345346",
+            "title" : "title1",
+            "amount" : 50,
+            "balanceAfter" : 2900,
+            "_id" : ObjectId("5a588a313377556c4a8eb4b3"),
+            "date" : ISODate("2018-01-12T10:13:05.171Z")
+        }
+    ],
+    "__v" : 13
+}
