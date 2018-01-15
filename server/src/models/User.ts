@@ -1,20 +1,20 @@
 import * as bcrypt from "bcrypt-nodejs";
 import * as crypto from "crypto";
 import * as mongoose from "mongoose";
+import { Schema } from "mongoose";
 
 export type UserModel = mongoose.Document & {
-  email: string,
+  username: string,
   password: string,
-  token: string,
+  accounts: Schema.Types.ObjectId[],
 
   comparePassword: (candidatePassword: string, cb: (err: any, isMatch: any) => {}) => void
 };
 
-
 const userSchema = new mongoose.Schema({
-  email: { type: String, unique: true },
+  username: { type: String, unique: true },
   password: String,
-  token: String
+  accounts: [{ type: Schema.Types.ObjectId, ref: "BankAccount" }]
 }, { timestamps: true });
 
 /**
@@ -39,6 +39,5 @@ userSchema.methods.comparePassword = function (candidatePassword: string, cb: (e
   });
 };
 
-// export const User: UserType = mongoose.model<UserType>('User', userSchema);
 const User = mongoose.model("User", userSchema);
 export default User;

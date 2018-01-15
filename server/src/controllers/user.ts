@@ -27,3 +27,12 @@ export let logout = (req: Request, res: Response) => {
   req.logout();
   res.redirect("/");
 };
+
+/**
+ * GET /logout
+ * Log out.
+ */
+export let newUser = (req: Request, res: Response) => {
+  req.logout();
+  res.redirect("/");
+};

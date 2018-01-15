@@ -3,12 +3,13 @@ import { OperationResult, PaymentInput, WithdrawInput, TransferInput } from "../
 import { default as BankAccount, BankAccountModel, HistoryEntryModel } from "../models/BankAccount";
 import * as SoapHelper from "../helpers/soap";
 import * as restBankController from "./restBank";
+import { Headers, Request } from "request";
 
 @SoapService({
   portName: "BankPort",
   serviceName: "BankService"
 })
-export class BankController {
+export class SoapBankController {
 
   @SoapOperation(OperationResult)
   payment(data: PaymentInput, res: (res: OperationResult) => any): void {
@@ -59,7 +60,7 @@ export class BankController {
   }
 
   @SoapOperation(OperationResult)
-  transfer(data: TransferInput, res: (res: OperationResult) => any): void {
+  transfer(data: TransferInput, res: (res: OperationResult) => any, headers: Headers, req: Request): void {
     restBankController.postOutputTransfer(data)
     .then((reponseBody) => {
       const promise = BankAccount.findOne({ number: data.source_account }).exec();
