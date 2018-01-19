@@ -94,9 +94,9 @@ export class SoapBankController {
     if (!data.destination_name) return SoapHelper.failResponse("Reciever is required!", res);
     if (!data.source_account) return SoapHelper.failResponse("Account from number is required!", res);
     if (!data.source_name) return SoapHelper.failResponse("Source name is required!", res);
-    if (data.source_name.length < 255) return SoapHelper.failResponse("Source name should has less than 255!", res);
-    if (data.title.length < 255) return SoapHelper.failResponse("Title should has less than 255!", res);
-    if (data.destination_name.length < 255) return SoapHelper.failResponse("Reciever should has less than 255!", res);
+    // if (data.source_name.length < 255) return SoapHelper.failResponse("Source name should has less than 255!", res);
+    // if (data.title.length < 255) return SoapHelper.failResponse("Title should has less than 255!", res);
+    // if (data.destination_name.length < 255) return SoapHelper.failResponse("Reciever should has less than 255!", res);
 
     const promise = BankAccount.findOne({ number: data.source_account }).populate({ path: "owner", select: "username" }).exec();
 
@@ -137,13 +137,13 @@ export class SoapBankController {
   history(data: HistoryInput, res: (res: HistoryOutput) => any, headers: any, req: IncomingMessage): void {
     const credentials = auth(req);
 
-    if (!data.accountNumber) return SoapHelper.failResponse("Title is required!", res);
+    if (!data.accountNumber) return SoapHelper.failResponse("Account number is required!", res);
 
     const promise = BankAccount.findOne({ number: data.accountNumber }).populate({ path: "owner", select: "username" }).exec();
 
     promise.then((doc: BankAccountModel) => {
       if (!doc) throw new Error("Not found source account");
-      if (!(doc.owner.username === credentials.name)) throw new Error("Here Unauthorized");
+      if (!(doc.owner.username === credentials.name)) throw new Error("Unauthorized");
 
       res({ status: true, history: doc.history });
     })

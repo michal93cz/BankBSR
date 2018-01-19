@@ -91,7 +91,7 @@ export class HistoryItem {
   date?: Date;
 }
 
-// klasa uzywana na w opodziedzi na operacje pobierania historii danego konta
+// klasa uzywana na w odpowiedzi na operacje pobierania historii danego konta
 @XSDComplexType
 export class HistoryOutput {
 

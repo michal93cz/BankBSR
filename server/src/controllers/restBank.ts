@@ -10,16 +10,21 @@ import * as path from "path";
 import User, { UserModel } from "../models/User";
 import * as nrb from "../helpers/nrb";
 
-const authConfig = {
+const authInputConfig = {
     username: process.env.TRANSFER_USERNAME,
     password: process.env.TRANSFER_PASSWORD
 };
 
-// metoda REST pozwalająca bankowi zewnętrznemu na wykonaie przelewu na konto w banku wewnetrznym
+const authOutputConfig = {
+    username: process.env.TRANSFER_USERNAME,
+    password: process.env.TRANSFER_PASSWORD
+};
+
+// metoda REST pozwalająca bankowi zewnętrznemu na wykonanie przelewu na konto w banku wewnetrznym
 export let postInputTransfer = (req: Request, res: Response) => {
     const credentials = auth(req);
 
-    if (!credentials || credentials.name !== authConfig.username || credentials.pass !== authConfig.password) {
+    if (!credentials || credentials.name !== authInputConfig.username || credentials.pass !== authInputConfig.password) {
         res.status(401).send();
     }
     // else if (!nrb.isValid(req.body.source_account)) res.status(400).send("Not valid account source number: " + req.body.source_account);
@@ -67,7 +72,7 @@ export let postOutputTransfer = (data: TransferInput) => {
             if (data[0] === bankNumber) bankEndpoint = data[1];
         })
         .on("end", () => {
-            const bankUri = "http://" + authConfig.username + ":" + authConfig.password + "@" + bankEndpoint;
+            const bankUri = "http://" + authOutputConfig.username + ":" + authOutputConfig.password + "@" + bankEndpoint;
             const uri = bankUri + "/accounts/" + accountToNumber + "/history";
             const options = {
                 method: "POST",
