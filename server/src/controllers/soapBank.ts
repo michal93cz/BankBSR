@@ -94,9 +94,6 @@ export class SoapBankController {
     if (!data.destination_name) return SoapHelper.failResponse("Reciever is required!", res);
     if (!data.source_account) return SoapHelper.failResponse("Account from number is required!", res);
     if (!data.source_name) return SoapHelper.failResponse("Source name is required!", res);
-    // if (data.source_name.length < 255) return SoapHelper.failResponse("Source name should has less than 255!", res);
-    // if (data.title.length < 255) return SoapHelper.failResponse("Title should has less than 255!", res);
-    // if (data.destination_name.length < 255) return SoapHelper.failResponse("Reciever should has less than 255!", res);
 
     const promise = BankAccount.findOne({ number: data.source_account }).populate({ path: "owner", select: "username" }).exec();
 
