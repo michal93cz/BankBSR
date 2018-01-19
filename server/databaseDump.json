@@ -48,3 +48,24 @@
     ],
     "__v" : 13
 }
+
+{
+    "_id" : ObjectId("5a5a59261c85817b081d3eee"),
+    "updatedAt" : ISODate("2018-01-15T21:35:58.016Z"),
+    "createdAt" : ISODate("2018-01-13T19:08:22.499Z"),
+    "username" : "michu",
+    "password" : "$2a$10$yDNuY9/lg25ezIHz9FlSyOmZ1xrCZA3d5L2FQv0Ks4PYd3ihV4DKO",
+    "__v" : 0,
+    "accounts" : [ 
+        ObjectId("5a5bf85ca17dd9a7d6ddb813"), 
+        ObjectId("5a5bf865a17dd9a7d6ddb814"), 
+        ObjectId("5a5c73e360ed9eb013f46e97"), 
+        ObjectId("5a5c785f05812bb11862748a"), 
+        ObjectId("5a5ca4e7f69ccdb5b4bfaf08"), 
+        ObjectId("5a5ca4eff69ccdb5b4bfaf09"), 
+        ObjectId("5a5ca53baf4187b5da8727af"), 
+        ObjectId("5a5ca935251180b708015579"), 
+        ObjectId("5a5ca94d251180b70801557a"), 
+        ObjectId("5a5d1ebd7360c6d0fd428fb0")
+    ]
+}

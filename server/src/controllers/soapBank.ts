@@ -9,12 +9,15 @@ import { IncomingMessage } from "http";
 import User from "../models/User";
 import { authorize } from "fbgraph";
 
+// jest to klasa usługi SOAP oferującej obsługę klienta banku
 @SoapService({
   portName: "BankPort",
   serviceName: "BankService"
 })
 export class SoapBankController {
 
+  // metoda wplacania pieniedzy na konto
+  // uzytkownik musi być zautoryzowany oraz być właścicielem konta, aby wykonać te metodę na danym koncie
   @SoapOperation(OperationResult)
   payment(data: PaymentInput, res: (res: OperationResult) => any, headers: Headers, req: IncomingMessage): void {
     const credentials = auth(req);
@@ -45,6 +48,8 @@ export class SoapBankController {
     }
   }
 
+  // metoda wyplacania pieniedzy z konta
+  // uzytkownik musi być zautoryzowany oraz być właścicielem konta, aby wykonać te metodę na danym koncie
   @SoapOperation(OperationResult)
   withdraw(data: WithdrawInput, res: (res: OperationResult) => any, headers: any, req: IncomingMessage): void {
     const credentials = auth(req);
@@ -77,6 +82,8 @@ export class SoapBankController {
     .catch((err) => SoapHelper.failResponse(err.message, res));
   }
 
+  // metoda przelewania pieniedzy z swojego konta na inne
+  // uzytkownik musi być zautoryzowany oraz być właścicielem konta, aby wykonać te metodę na danym koncie
   @SoapOperation(OperationResult)
   transfer(data: TransferInput, res: (res: OperationResult) => any, headers: any, req: IncomingMessage): void {
     const credentials = auth(req);
@@ -124,6 +131,8 @@ export class SoapBankController {
     .catch((err) => SoapHelper.failResponse(err.message, res));
   }
 
+  // metoda pobierania historii operacji konta
+  // uzytkownik musi być zautoryzowany oraz być właścicielem konta, aby wykonać te metodę na danym koncie
   @SoapOperation(HistoryOutput)
   history(data: HistoryInput, res: (res: HistoryOutput) => any, headers: any, req: IncomingMessage): void {
     const credentials = auth(req);

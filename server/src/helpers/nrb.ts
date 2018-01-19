@@ -1,3 +1,4 @@
+// metoda sprawdzająca poprawność numeru bankowego na podstawie jego sumy kontrolnej
 export let isValid = (number: string): boolean => {
     number = number + "2521";
     const sk = number.substr(0, 2);
@@ -9,6 +10,8 @@ export let isValid = (number: string): boolean => {
     return parseInt(number + sk) % 97 == 1 ? true : false;
 };
 
+// metoda generująca numer konta bankowego na podstawie numeru porządkowego konta (inkrementowanego)
+// razem z numerem banku i sumą kontrolną
 export let generate = (number: string, cb: (done: string) => any): void => {
     let i, j, sum;
     let res: string;

@@ -18,7 +18,6 @@ import * as bcrypt from "bcrypt-nodejs";
 dotenv.config({ path: ".env.example" });
 
 // Controllers (route handlers)
-import * as userController from "./controllers/user";
 import { SoapBankController } from "./controllers/soapBank";
 import * as restBankController from "./controllers/restBank";
 import { UserModel } from "./models/User";
@@ -68,8 +67,6 @@ app.all("/soap/bank", (req, res, next) => {
 app.use("/soap/bank", soap(soapBankController));
 
 app.post("/accounts/:accountNumber/history", restBankController.postInputTransfer);
-app.post("/login", userController.postLogin);
-app.get("/logout", userController.logout);
 
 app.all("/api/accounts", (req, res, next) => {
   const credentials = auth(req);

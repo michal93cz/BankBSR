@@ -1,5 +1,6 @@
 import { XSDComplexType, XSDElement } from "soap-decorators";
 
+// klasa uzywana do danych wejściowych metody przelewu bankowego
 @XSDComplexType
 export class TransferInput {
 
@@ -22,6 +23,7 @@ export class TransferInput {
   destination_name: string;
 }
 
+// klasa uzywana do danych wejściowych metody wpłaty pieniędzy na konto
 @XSDComplexType
 export class PaymentInput {
 
@@ -32,6 +34,7 @@ export class PaymentInput {
   amount: number;
 }
 
+// klasa uzywana do danych wejściowych metody wypłaty pieniędzy z konta
 @XSDComplexType
 export class WithdrawInput {
 
@@ -42,6 +45,8 @@ export class WithdrawInput {
   amount: number;
 }
 
+// generyczna klasa uzywana do informowania klienta o powodzeniu/niepowodzeniu operacji
+// zawiera równiez pole, w którym znajdują się szczegóły niepowodzenia lub zaktulizowany stan konta
 @XSDComplexType
 export class OperationResult {
 
@@ -55,6 +60,7 @@ export class OperationResult {
   currentBalance?: number;
 }
 
+// klasa uzywana do danych wejściowych metody pobierającej historie danego konta
 @XSDComplexType
 export class HistoryInput {
 
@@ -62,6 +68,7 @@ export class HistoryInput {
   accountNumber: string;
 }
 
+// klasa reprezentująca jeden zapis w historii konta
 @XSDComplexType
 export class HistoryItem {
 
@@ -84,6 +91,7 @@ export class HistoryItem {
   date?: Date;
 }
 
+// klasa uzywana na w opodziedzi na operacje pobierania historii danego konta
 @XSDComplexType
 export class HistoryOutput {
 

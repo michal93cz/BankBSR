@@ -15,6 +15,7 @@ const authConfig = {
     password: process.env.TRANSFER_PASSWORD
 };
 
+// metoda REST pozwalająca bankowi zewnętrznemu na wykonaie przelewu na konto w banku wewnetrznym
 export let postInputTransfer = (req: Request, res: Response) => {
     const credentials = auth(req);
 
@@ -51,6 +52,9 @@ export let postInputTransfer = (req: Request, res: Response) => {
     }
 };
 
+// metoda REST wykonania przelewu do zewnętrznego banku
+// na podstawie numeru banku z numeru konta pobierane jest z pliku csv adres banku do którego transferowane są pieniądze
+// metoda zwraca obiekt Promise, który wykonywany jest w metodzie interfejsu SOAP banku
 export let postOutputTransfer = (data: TransferInput) => {
     const accountToNumber = data.destination_account;
     const bankNumber = accountToNumber.substring(2, 10);
@@ -76,6 +80,8 @@ export let postOutputTransfer = (data: TransferInput) => {
     stream.pipe(csvStream);
 };
 
+// metoda REST tworzenia nowego konta dla uzytkownika
+// uzytkownik musi być zautoryzowany oraz być właścicielem konta
 export let newAccount = (req: Request, res: Response) => {
     const credentials = auth(req);
     User.findOne({ username: credentials.name }, (err, user: UserModel) => {
@@ -93,6 +99,8 @@ export let newAccount = (req: Request, res: Response) => {
     });
 };
 
+// metoda REST pobierania wszystkich kont uzytkownika
+// uzytkownik musi być zautoryzowany oraz być właścicielem konta
 export let getAccounts = (req: Request, res: Response) => {
     const credentials = auth(req);
     const promise = User.findOne({ username: credentials.name }).populate({ path: "accounts", select: "number" }).exec();
@@ -106,6 +114,8 @@ export let getAccounts = (req: Request, res: Response) => {
     });
 };
 
+// metoda pobierania historii operacji konta
+// uzytkownik musi być zautoryzowany oraz być właścicielem konta, aby wykonać te metodę na danym koncie
 export let getHistory = (req: Request, res: Response) => {
     const credentials = auth(req);
 
