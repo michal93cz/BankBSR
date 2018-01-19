@@ -1,7 +1,10 @@
 <mat-toolbar color="primary">
-  <a mat-button routerLink="/"><i class="material-icons">monetization_on</i> {{title}}</a>
+  <a mat-button routerLink="/atm"><i class="material-icons">monetization_on</i> {{title}}</a>
   <a mat-button routerLink="/atm">Atm</a>
   <a mat-button routerLink="/transfer">Transfer</a>
+  <a mat-button routerLink="/history">History</a>
+  <span class="fill-remaining-space"></span>
+  <a (click)="logOut()" mat-button>Logout</a>
 </mat-toolbar>
 
 <router-outlet></router-outlet>

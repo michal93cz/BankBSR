@@ -1,5 +1,73 @@
-<p>
+<!-- <p>
   <button mat-button (click)="payment()">Payment</button>
   <button mat-button (click)="withdraw()">Withdraw</button>
   result is {{ message }}
-</p>
+</p> -->
+
+<div class="container">
+  <h1>Payment</h1>
+  <form (ngSubmit)="payment()" #transferForm="ngForm">
+    <div class="form-group">
+      <mat-form-field>
+        <mat-select placeholder="Source account" [(value)]="formPayment.accountToNumber">
+          <mat-option *ngFor="let account of accountsList" [value]="account.number">
+            {{ account.number }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="form-group">
+      <label for="amount">Amount</label>
+      <input type="number" class="form-control" id="amount"
+              required
+              [(ngModel)]="formPayment.amount" name="amount"
+              #amount="ngModel">
+    </div>
+    <button type="submit" class="btn btn-success">Transfer</button>
+  </form>
+</div>
+
+<div *ngIf="paymentError">
+  <p>{{ paymentError }}</p>
+  <p>Please fill form correct or try again later.</p>
+</div>
+
+<div *ngIf="paymentMessage">
+  <p>Operation completed, current balance: {{ paymentMessage }}</p>
+</div>
+
+<br>
+<br>
+<div class="container">
+  <h1>Withdraw</h1>
+  <form (ngSubmit)="withdraw()" #transferForm="ngForm">
+    <div class="form-group">
+      <mat-form-field>
+        <mat-select placeholder="Source account" [(value)]="formWithdraw.accountFromNumber">
+          <mat-option *ngFor="let account of accountsList" [value]="account.number">
+            {{ account.number }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="form-group">
+      <label for="amount">Amount</label>
+      <input type="number" class="form-control" id="amount"
+              required
+              [(ngModel)]="formWithdraw.amount" name="amount"
+              #amount="ngModel">
+    </div>
+    <button type="submit" class="btn btn-success">Transfer</button>
+  </form>
+</div>
+
+<div *ngIf="withdrawError">
+  <p>{{ withdrawError }}</p>
+  <p>Please fill form correct or try again later.</p>
+</div>
+
+<div *ngIf="withdrawMessage">
+  <p>Operation completed, current balance: {{ withdrawMessage }}</p>
+</div>

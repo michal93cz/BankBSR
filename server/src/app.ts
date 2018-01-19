@@ -62,7 +62,6 @@ app.all("/soap/bank", (req, res, next) => {
     });
   })
   .catch((err: any) => {
-    console.log("not found");
     res.status(401).send();
   });
 });
@@ -72,6 +71,22 @@ app.post("/accounts/:accountNumber/history", restBankController.postInputTransfe
 app.post("/login", userController.postLogin);
 app.get("/logout", userController.logout);
 
-app.post("/account", restBankController.newAccount);
+app.all("/api/accounts", (req, res, next) => {
+  const credentials = auth(req);
+  const promise = User.findOne({ username: credentials.name }).exec();
+
+  promise.then((doc: UserModel) => {
+    bcrypt.compare(credentials.pass, doc.password, (err: mongoose.Error, isMatch: boolean) => {
+      if (err) res.status(401).send();
+      else isMatch ? next() : res.status(401).send();
+    });
+  })
+  .catch((err: any) => {
+    res.status(401).send();
+  });
+});
+app.post("/api/accounts", restBankController.newAccount);
+app.get("/api/accounts", restBankController.getAccounts);
+app.get("/api/accounts/:accountNumber/history", restBankController.getHistory);
 
 module.exports = app;

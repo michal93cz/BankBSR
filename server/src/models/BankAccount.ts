@@ -20,7 +20,7 @@ export type BankAccountModel = mongoose.Document & {
   number?: string,
   balance?: number,
   counter?: number,
-  owner: Schema.Types.ObjectId,
+  owner: any,
   history?: HistoryEntryModel[]
 };
 
@@ -40,7 +40,7 @@ const bankAccountSchema = new mongoose.Schema({
     number: { type: String, unique: true },
     balance: { type: Number, default: 0 },
     counter: Number,
-    owner: Schema.Types.ObjectId,
+    owner: { type: Schema.Types.ObjectId, ref: "User" },
     history: [historyEntrySchema]
 });
 

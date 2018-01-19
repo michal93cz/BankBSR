@@ -1,0 +1,28 @@
+<mat-form-field>
+  <mat-select placeholder="Source account" [(value)]="choosenAccount">
+    <mat-option *ngFor="let account of accountsList" [value]="account.number">
+      {{ account.number }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+<button mat-button (click)="getHistory()">Get history</button>
+<button mat-button (click)="getHistoryRest()">Get history (REST)</button>
+
+<div *ngIf="error">
+  <p>{{ error }}</p>
+  <p>Please try again later.</p>
+</div>
+
+<mat-list>
+  <h1 mat-subheader>History</h1>
+  <mat-list-item *ngFor="let entity of message; last as last">
+    <h4 mat-line>Type: {{entity.operationType}}</h4>
+    <p mat-line>Amount: {{entity.amount}} </p>
+    <p mat-line>Balance after: {{entity.balanceAfter}} </p>
+    <p *ngIf="entity.title" mat-line>Title: {{entity.title}} </p>
+    <p *ngIf="entity.anotherAccountNumber" mat-line>Account from: {{entity.anotherAccountNumber}} </p>
+    <p mat-line>Date: {{entity.date | date:'fullDate'}} </p>
+    <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+  </mat-list-item>
+  <mat-divider></mat-divider>
+</mat-list>

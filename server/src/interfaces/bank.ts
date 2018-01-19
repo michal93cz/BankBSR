@@ -54,3 +54,44 @@ export class OperationResult {
   @XSDElement
   currentBalance?: number;
 }
+
+@XSDComplexType
+export class HistoryInput {
+
+  @XSDElement
+  accountNumber: string;
+}
+
+@XSDComplexType
+export class HistoryItem {
+
+  @XSDElement
+  operationType: string;
+
+  @XSDElement
+  anotherAccountNumber?: string;
+
+  @XSDElement
+  title?: string;
+
+  @XSDElement
+  amount: number;
+
+  @XSDElement
+  balanceAfter: number;
+
+  @XSDElement
+  date?: Date;
+}
+
+@XSDComplexType
+export class HistoryOutput {
+
+  @XSDElement
+  status: boolean;
+
+  @XSDElement({
+    type: HistoryItem
+  })
+  history: HistoryItem[];
+}

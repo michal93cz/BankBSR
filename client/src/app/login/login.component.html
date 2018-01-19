@@ -1,4 +1,24 @@
-<h1>
-  Welcome to Bank BSR!
-</h1>
-<p>Please signin:</p>
+<div class="container">
+  <h1>Welcome to Bank BSR!</h1>
+  <form (ngSubmit)="onSubmit()" #heroForm="ngForm">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" class="form-control" id="username"
+              required
+              [(ngModel)]="model.username" name="username"
+              #name="ngModel">
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" class="form-control" id="password"
+              [(ngModel)]="model.password" name="password">
+    </div>
+
+    <button type="submit" class="btn btn-success">Login!</button>
+  </form>
+
+  <!-- <div [ngIf]="error">
+    <p></p>
+  </div> -->
+</div>

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SOAPService, Client } from 'ngx-soap';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-atm',
@@ -8,24 +9,41 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   styleUrls: ['./atm.component.css']
 })
 export class AtmComponent implements OnInit {
+  public formPayment = {
+    accountToNumber: '',
+    amount: 0
+  };
+  public formWithdraw = {
+    accountFromNumber: '',
+    amount: 0
+  };
+  public accountsList;
+  public paymentError = '';
+  public withdrawError = '';
+  public paymentMessage = '';
+  public withdrawMessage = '';
   private client: Client;
   private jsonResponse: any;
   private xmlResponse: string;
-  private message: string;
 
   constructor(
     private http: HttpClient,
-    private soap: SOAPService
+    private soap: SOAPService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
-    this.message = '';
+    this.paymentError = '';
+    this.withdrawError = '';
+    this.paymentMessage = '';
+    this.withdrawMessage = '';
 
-    this.http.get('/soap/bank?WSDL', { responseType: 'text' })
+    this.http.get('/api/accounts', { headers: this.authService.getAuthHeaders(), responseType: 'json' })
+      .subscribe((response: any) => this.accountsList = response);
+
+    this.http.get('/soap/bank?WSDL', { headers: this.authService.getAuthHeaders(), responseType: 'text' })
       .subscribe(response => {
         if (response) {
-          console.log(response);
-
           this.soap.createClient(response).then((client: Client) => {
             this.client = client;
           });
@@ -34,66 +52,64 @@ export class AtmComponent implements OnInit {
   }
 
   payment() {
-    const body  = {
-      accountToNumber: '2345346',
-      amount: 50
-    };
-
-    this.client.operation('payment', body)
+    this.client.operation('payment', this.formPayment)
       .then(operation => {
         if (operation.error) {
-          console.log('Operation error', operation.error);
+          this.paymentError = 'Internal error';
           return;
         }
-
         const url = operation.url.replace('http://localhost:4200', '/soap/bank');
-        this.http.post(url, operation.xml, { headers: operation.headers, responseType: 'text' })
+
+        this.http.post(url, operation.xml, { headers: this.authService.getAuthHeaders(operation.headers), responseType: 'text' })
           .subscribe(
             response => {
               this.xmlResponse = response.toString();
               this.jsonResponse = this.client.parseResponseBody(response.toString());
-              try {
-                console.log(this.jsonResponse);
-                this.message = this.jsonResponse.Body.OperationResult.currentBalance;
-              } catch (error) { }
+              console.log(this.jsonResponse);
+              if (this.jsonResponse.Body.OperationResult.status) {
+                this.paymentMessage = this.jsonResponse.Body.OperationResult.currentBalance;
+                this.paymentError = '';
+              } else {
+                this.paymentError = this.jsonResponse.Body.OperationResult.message;
+                this.paymentMessage = '';
+              }
             },
             err => {
-              console.log('Error calling ws', err);
+              this.paymentError = 'Internal error';
             }
         );
       })
-      .catch(err => console.log('Error', err));
+      .catch(err => this.paymentError = 'Internal error');
   }
 
   withdraw() {
-    const body  = {
-      accountFromNumber: '2345346',
-      amount: 50
-    };
-
-    this.client.operation('withdraw', body)
+    this.client.operation('withdraw', this.formWithdraw)
       .then(operation => {
         if (operation.error) {
-          console.log('Operation error', operation.error);
+          this.withdrawError = 'Internal error';
           return;
         }
-
         const url = operation.url.replace('http://localhost:4200', '/soap/bank');
-        this.http.post(url, operation.xml, { headers: operation.headers, responseType: 'text' })
+
+        this.http.post(url, operation.xml, { headers: this.authService.getAuthHeaders(operation.headers), responseType: 'text' })
           .subscribe(
             response => {
               this.xmlResponse = response.toString();
               this.jsonResponse = this.client.parseResponseBody(response.toString());
-              try {
-                console.log(this.jsonResponse);
-                this.message = this.jsonResponse.Body.OperationResult.currentBalance;
-              } catch (error) { }
+              console.log(this.jsonResponse);
+              if (this.jsonResponse.Body.OperationResult.status) {
+                this.withdrawMessage = this.jsonResponse.Body.OperationResult.currentBalance;
+                this.withdrawError = '';
+              } else {
+                this.withdrawError = this.jsonResponse.Body.OperationResult.message;
+                this.withdrawMessage = '';
+              }
             },
             err => {
-              console.log('Error calling ws', err);
+              this.withdrawError = 'Internal error';
             }
         );
       })
-      .catch(err => console.log('Error', err));
+      .catch(err => this.withdrawError = 'Internal error');
   }
 }

@@ -1,8 +1,12 @@
 export let isValid = (number: string): boolean => {
     number = number + "2521";
+    const sk = number.substr(0, 2);
     number = (number + number.substring(0, 1)).slice(2, number.length);
 
-    return parseInt(number) % 97 == 1 ? true : false;
+    console.log(number + sk);
+    console.log(parseInt(number + sk) % 97);
+
+    return parseInt(number + sk) % 97 == 1 ? true : false;
 };
 
 export let generate = (number: string, cb: (done: string) => any): void => {
