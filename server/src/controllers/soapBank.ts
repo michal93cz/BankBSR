@@ -1,13 +1,14 @@
 import { SoapService, SoapOperation } from "soap-decorators";
-import { OperationResult, PaymentInput, WithdrawInput, TransferInput, HistoryOutput, HistoryInput } from "../interfaces/bank";
+import { OperationResult, PaymentInput, WithdrawInput, TransferInput, HistoryOutput, HistoryInput, HistoryItem, AccountsOutput, AccountsInput, AccountItem } from "../interfaces/bank";
 import { default as BankAccount, BankAccountModel, HistoryEntryModel } from "../models/BankAccount";
 import * as SoapHelper from "../helpers/soap";
 import * as restBankController from "./restBank";
 import { Headers, Request } from "request";
 import * as auth from "basic-auth";
 import { IncomingMessage } from "http";
-import User from "../models/User";
+import User, { UserModel } from "../models/User";
 import { authorize } from "fbgraph";
+import * as _ from "lodash";
 
 // jest to klasa usługi SOAP oferującej obsługę klienta banku
 @SoapService({
@@ -88,12 +89,16 @@ export class SoapBankController {
   transfer(data: TransferInput, res: (res: OperationResult) => any, headers: any, req: IncomingMessage): void {
     const credentials = auth(req);
 
+    if (data.source_account === data.destination_account) return SoapHelper.failResponse("You can`t transfer to the same account", res);
     if (data.amount <= 0) return SoapHelper.failResponse("Amount should be greater than zero!", res);
     if (!data.title) return SoapHelper.failResponse("Title is required!", res);
     if (!data.destination_account) return SoapHelper.failResponse("Account to number is required!", res);
     if (!data.destination_name) return SoapHelper.failResponse("Reciever is required!", res);
     if (!data.source_account) return SoapHelper.failResponse("Account from number is required!", res);
     if (!data.source_name) return SoapHelper.failResponse("Source name is required!", res);
+    if (data.source_name.length > 255) return SoapHelper.failResponse("Source name should has less than 255!", res);
+    if (data.title.length > 255) return SoapHelper.failResponse("Title should has less than 255!", res);
+    if (data.destination_name.length > 255) return SoapHelper.failResponse("Reciever should has less than 255!", res);
 
     const promise = BankAccount.findOne({ number: data.source_account }).populate({ path: "owner", select: "username" }).exec();
 
@@ -117,7 +122,7 @@ export class SoapBankController {
         title: data.title,
         amount: -data.amount,
         balanceAfter: currentBalance,
-        anotherAccountNumber: data.source_account
+        anotherAccountNumber: data.destination_account
       };
 
       bankAccount.balance = currentBalance;
@@ -136,13 +141,56 @@ export class SoapBankController {
 
     if (!data.accountNumber) return SoapHelper.failResponse("Account number is required!", res);
 
-    const promise = BankAccount.findOne({ number: data.accountNumber }).populate({ path: "owner", select: "username" }).exec();
+    const promise = BankAccount
+      .findOne({ number: data.accountNumber })
+      .populate({ path: "owner", select: "username -_id" })
+      .populate({ path: "history", select: "-_id" })
+      .exec();
 
     promise.then((doc: BankAccountModel) => {
       if (!doc) throw new Error("Not found source account");
       if (!(doc.owner.username === credentials.name)) throw new Error("Unauthorized");
 
-      res({ status: true, history: doc.history });
+      const history: HistoryItem[] = [];
+      doc.history.forEach((item) => {
+        history.push({
+          operationType: item.operationType,
+          amount: item.amount,
+          balanceAfter: item.balanceAfter,
+          // niestety serializator w bibliotece, którą uzywam do SOAP sie dawał sobie rady z datami
+          date: item.date.toString(),
+          title: _.escape(item.title),
+          anotherAccountNumber: item.anotherAccountNumber
+        });
+      });
+
+      res({ status: true, history });
+    })
+    .catch((err) => SoapHelper.failResponse(err.message, res));
+
+    // throw {
+    //   Fault: {
+    //     Code: {
+    //       Value: "soap:Sender",
+    //       Subcode: { value: "rpc:BadArguments" }
+    //     },
+    //     Reason: { Text: "Processing Error" },
+    //     statusCode: 500
+    //   }
+    // };
+  }
+
+  @SoapOperation(AccountsOutput)
+  accounts(data: AccountsInput, res: (res: AccountsOutput) => any, headers: any, req: IncomingMessage): void {
+    const credentials = auth(req);
+    const promise = User.findOne({ username: credentials.name })
+        .populate({ path: "accounts", select: "number -_id" })
+        .exec();
+
+    promise.then((user: UserModel) => {
+        if (!user) throw new Error("Not found");
+        const accounts = _.map(user.accounts, (account) => _.pick(account, ["number"]));
+        res({ status: true, accounts: accounts as AccountItem[] });
     })
     .catch((err) => SoapHelper.failResponse(err.message, res));
   }

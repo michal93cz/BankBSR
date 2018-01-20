@@ -75,4 +75,34 @@ export class HistoryComponent implements OnInit {
     this.http.get('/api/accounts/' + this.choosenAccount + '/history', { headers: this.authService.getAuthHeaders(), responseType: 'json' })
       .subscribe((response: any) => this.message = response);
   }
+
+  getAccounts() {
+    this.client.operation('accounts', { username: 'michu' })
+      .then(operation => {
+        if (operation.error) {
+          this.error = 'Here Internal error';
+          return;
+        }
+        const url = operation.url.replace('http://localhost:4200', '/soap/bank');
+
+        this.http.post(url, operation.xml, { headers: this.authService.getAuthHeaders(operation.headers), responseType: 'text' })
+          .subscribe(
+            response => {
+              this.xmlResponse = response.toString();
+              this.jsonResponse = this.client.parseResponseBody(response.toString());
+              console.log(this.jsonResponse);
+              if (this.jsonResponse.Body.AccountsOutput.status) {
+                console.log(this.jsonResponse.Body);
+                this.error = '';
+              } else {
+                console.log('Error: ', this.jsonResponse.Body);
+              }
+            },
+            err => {
+              this.error = 'Internal error';
+            }
+        );
+      })
+      .catch(err => this.error = 'Internal error');
+  }
 }

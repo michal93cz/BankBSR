@@ -88,10 +88,10 @@ export class HistoryItem {
   balanceAfter: number;
 
   @XSDElement
-  date?: Date;
+  date?: string;
 }
 
-// klasa uzywana na w odpowiedzi na operacje pobierania historii danego konta
+// klasa uzywana w odpowiedzi na operacje pobierania historii danego konta
 @XSDComplexType
 export class HistoryOutput {
 
@@ -102,4 +102,33 @@ export class HistoryOutput {
     type: HistoryItem
   })
   history: HistoryItem[];
+}
+
+// klasa uzywana do
+@XSDComplexType
+export class AccountsInput {
+
+  @XSDElement
+  username: string;
+}
+
+// klasa
+@XSDComplexType
+export class AccountItem {
+
+  @XSDElement
+  number: string;
+}
+
+// klasa uzywana w odpowiedzi na
+@XSDComplexType
+export class AccountsOutput {
+
+  @XSDElement
+  status: boolean;
+
+  @XSDElement({
+    type: AccountItem
+  })
+  accounts: AccountItem[];
 }

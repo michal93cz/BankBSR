@@ -2,12 +2,9 @@
 export let isValid = (number: string): boolean => {
     number = number + "2521";
     const sk = number.substr(0, 2);
-    number = (number + number.substring(0, 1)).slice(2, number.length);
+    number = number.slice(2, number.length) + sk;
 
-    console.log(number + sk);
-    console.log(parseInt(number + sk) % 97);
-
-    return parseInt(number + sk) % 97 == 1 ? true : false;
+    return parseInt(number) % 97 == 1 ? true : false;
 };
 
 // metoda generująca numer konta bankowego na podstawie numeru porządkowego konta (inkrementowanego)

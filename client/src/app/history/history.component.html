@@ -5,8 +5,9 @@
     </mat-option>
   </mat-select>
 </mat-form-field>
-<button mat-button (click)="getHistory()">Get history</button>
+<button mat-button (click)="getHistory()">Get history (WSDL)</button>
 <button mat-button (click)="getHistoryRest()">Get history (REST)</button>
+<button mat-button (click)="getAccounts()">Get accounts</button>
 
 <div *ngIf="error">
   <p>{{ error }}</p>
@@ -20,8 +21,8 @@
     <p mat-line>Amount: {{entity.amount}} </p>
     <p mat-line>Balance after: {{entity.balanceAfter}} </p>
     <p *ngIf="entity.title" mat-line>Title: {{entity.title}} </p>
-    <p *ngIf="entity.anotherAccountNumber" mat-line>Account from: {{entity.anotherAccountNumber}} </p>
-    <p mat-line>Date: {{entity.date | date:'fullDate'}} </p>
+    <p *ngIf="entity.anotherAccountNumber" mat-line>Another account number: {{entity.anotherAccountNumber}} </p>
+    <p *ngIf="entity.date" mat-line>Date: {{entity.date | date:'fullDate'}} </p>
     <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
   </mat-list-item>
   <mat-divider></mat-divider>

@@ -108,7 +108,9 @@ export let newAccount = (req: Request, res: Response) => {
 // uzytkownik musi być zautoryzowany oraz być właścicielem konta
 export let getAccounts = (req: Request, res: Response) => {
     const credentials = auth(req);
-    const promise = User.findOne({ username: credentials.name }).populate({ path: "accounts", select: "number" }).exec();
+    const promise = User.findOne({ username: credentials.name })
+        .populate({ path: "accounts", select: "number -_id" })
+        .exec();
 
     promise.then((user: UserModel) => {
         if (!user) throw new Error("Not found");
@@ -120,7 +122,7 @@ export let getAccounts = (req: Request, res: Response) => {
 };
 
 // metoda pobierania historii operacji konta
-// uzytkownik musi być zautoryzowany oraz być właścicielem konta, aby wykonać te metodę na danym koncie
+// uzytkownik musi być zautoryzowany oraz być właścicielem konta, aby wykonać tę metodę na danym koncie
 export let getHistory = (req: Request, res: Response) => {
     const credentials = auth(req);
 
