@@ -178,6 +178,8 @@ export class SoapBankController {
     .catch((err) => SoapHelper.failResponse(err.message, res));
   }
 
+  // metoda listy kont uytkownika
+  // uzytkownik musi być zautoryzowany
   @SoapOperation(AccountsOutput)
   accounts(data: AccountsInput, res: (res: AccountsOutput) => any, headers: any, req: IncomingMessage): void {
     const credentials = auth(req);

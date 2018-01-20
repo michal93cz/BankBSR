@@ -104,7 +104,7 @@ export class HistoryOutput {
   history: HistoryItem[];
 }
 
-// klasa uzywana do
+// klasa uzywana do pobierania listy kont uzytkownika
 @XSDComplexType
 export class AccountsInput {
 
@@ -112,7 +112,7 @@ export class AccountsInput {
   username: string;
 }
 
-// klasa
+// klasa reprezentujaca jedno konto bankowe
 @XSDComplexType
 export class AccountItem {
 
@@ -120,7 +120,7 @@ export class AccountItem {
   number: string;
 }
 
-// klasa uzywana w odpowiedzi na
+// klasa uzywana w odpowiedzi na zapytanie o liste kont uzytkownika
 @XSDComplexType
 export class AccountsOutput {
 
