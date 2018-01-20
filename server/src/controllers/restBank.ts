@@ -33,14 +33,12 @@ export let postInputTransfer = (req: Request, res: Response) => {
     else if (req.body.source_name.length > 255) res.status(400).send("Not valid source_name");
     else if (req.body.destination_name.length > 255) res.status(400).send("Not valid destination_name");
     else {
-      const promise = BankAccount.findOneAndUpdate(
-          { number: req.params.accountNumber },
-          { $inc: { "balance": req.body.amount} },
-          { new: true }
-        ).exec();
+      const promise = BankAccount.findOne(
+          { number: req.params.accountNumber }).exec();
 
       promise.then((doc: BankAccountModel) => {
         if (!doc) throw new Error("Not found");
+        doc.balance = doc.balance + req.body.amount;
         const historyEntry: HistoryEntryModel = {
             operationType: "TRANSFER",
             anotherAccountNumber: req.body.source_account,
@@ -63,7 +61,7 @@ export let postInputTransfer = (req: Request, res: Response) => {
 export let postOutputTransfer = (data: TransferInput) => {
     const accountToNumber = data.destination_account;
     const bankNumber = accountToNumber.substring(2, 10);
-    let bankEndpoint = "localhost:3000";
+    let bankEndpoint = "http://localhost:3000";
 
     const csvPath = path.resolve(path.join(__dirname, "../../../banks.csv"));
     const stream = fs.createReadStream(csvPath);
@@ -72,6 +70,8 @@ export let postOutputTransfer = (data: TransferInput) => {
             if (data[0] === bankNumber) bankEndpoint = data[1];
         })
         .on("end", () => {
+            bankEndpoint = bankEndpoint.substring(7, bankEndpoint.length);
+            console.log(bankEndpoint);
             const bankUri = "http://" + authOutputConfig.username + ":" + authOutputConfig.password + "@" + bankEndpoint;
             const uri = bankUri + "/accounts/" + accountToNumber + "/history";
             const options = {
