@@ -17,8 +17,8 @@
   <h1 mat-subheader>History</h1>
   <mat-list-item *ngFor="let entity of message; last as last">
     <h4 mat-line>Type: {{entity.operationType}}</h4>
-    <p mat-line>Amount: {{entity.amount}} </p>
-    <p mat-line>Balance after: {{entity.balanceAfter}} </p>
+    <p mat-line>Amount: {{entity.amount  / 100 | currency}} </p>
+    <p mat-line>Balance after: {{entity.balanceAfter / 100 | currency}} </p>
     <p *ngIf="entity.title" mat-line>Title: {{entity.title}} </p>
     <p *ngIf="entity.anotherAccountNumber" mat-line>Another account number: {{entity.anotherAccountNumber}} </p>
     <p *ngIf="entity.date" mat-line>Date: {{entity.date | date:'fullDate'}} </p>

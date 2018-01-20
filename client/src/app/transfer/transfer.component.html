@@ -67,5 +67,5 @@
 </div>
 
 <div *ngIf="message">
-  <p>Operation completed, current balance: {{ message }}</p>
+  <p>Operation completed, current balance: {{ message / 100 | currency }}</p>
 </div>

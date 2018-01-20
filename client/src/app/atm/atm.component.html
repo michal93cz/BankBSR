@@ -34,7 +34,7 @@
 </div>
 
 <div *ngIf="paymentMessage">
-  <p>Operation completed, current balance: {{ paymentMessage }}</p>
+  <p>Operation completed, current balance: {{ paymentMessage / 100 | currency }}</p>
 </div>
 
 <br>
@@ -69,5 +69,5 @@
 </div>
 
 <div *ngIf="withdrawMessage">
-  <p>Operation completed, current balance: {{ withdrawMessage }}</p>
+  <p>Operation completed, current balance: {{ withdrawMessage / 100 | currency }}</p>
 </div>

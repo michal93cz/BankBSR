@@ -48,6 +48,7 @@ export class TransferComponent implements OnInit {
   }
 
   transfer() {
+    this.formModel.amount = Math.floor(this.formModel.amount * 100);
     this.client.operation('transfer', this.formModel)
       .then(operation => {
         if (operation.error) {
@@ -69,12 +70,18 @@ export class TransferComponent implements OnInit {
                 this.error = this.jsonResponse.Body.OperationResult.message;
                 this.message = '';
               }
+
+              this.formModel.amount = 0;
             },
             err => {
               this.error = 'Internal error';
+              this.formModel.amount = 0;
             }
         );
       })
-      .catch(err => this.error = 'Internal error');
+      .catch(err => {
+        this.error = 'Internal error';
+        this.formModel.amount = 0;
+      });
   }
 }

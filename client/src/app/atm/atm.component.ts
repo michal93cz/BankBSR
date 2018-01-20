@@ -52,6 +52,7 @@ export class AtmComponent implements OnInit {
   }
 
   payment() {
+    this.formPayment.amount = Math.floor(this.formPayment.amount * 100);
     this.client.operation('payment', this.formPayment)
       .then(operation => {
         if (operation.error) {
@@ -73,16 +74,24 @@ export class AtmComponent implements OnInit {
                 this.paymentError = this.jsonResponse.Body.OperationResult.message;
                 this.paymentMessage = '';
               }
+
+              this.formPayment.amount = 0;
             },
             err => {
               this.paymentError = 'Internal error';
+
+              this.formPayment.amount = 0;
             }
         );
       })
-      .catch(err => this.paymentError = 'Internal error');
+      .catch(err => {
+        this.paymentError = 'Internal error';
+        this.formPayment.amount = 0;
+      });
   }
 
   withdraw() {
+    this.formWithdraw.amount = Math.floor(this.formWithdraw.amount * 100);
     this.client.operation('withdraw', this.formWithdraw)
       .then(operation => {
         if (operation.error) {
@@ -104,12 +113,17 @@ export class AtmComponent implements OnInit {
                 this.withdrawError = this.jsonResponse.Body.OperationResult.message;
                 this.withdrawMessage = '';
               }
+              this.formWithdraw.amount = 0;
             },
             err => {
               this.withdrawError = 'Internal error';
+              this.formWithdraw.amount = 0;
             }
         );
       })
-      .catch(err => this.withdrawError = 'Internal error');
+      .catch(err => {
+        this.withdrawError = 'Internal error';
+        this.formWithdraw.amount = 0;
+      });
   }
 }
