@@ -28,7 +28,6 @@ export let postInputTransfer = (req: Request, res: Response) => {
     if (!credentials || credentials.name !== authInputConfig.username || credentials.pass !== authInputConfig.password) {
         res.status(401).send("Unauthorized bank");
     }
-    // else if (!nrb.isValid(req.body.source_account)) res.status(400).send("Not valid account source number: " + req.body.source_account);
     else if (req.body.amount <= 0 || !Number.isInteger(req.body.amount)) res.status(400).send("Not valid amount");
     else if (req.body.title.length > 255) res.status(400).send("Not valid title");
     else if (req.body.source_name.length > 255) res.status(400).send("Not valid source_name");

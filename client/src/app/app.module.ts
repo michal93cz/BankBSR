@@ -22,6 +22,7 @@ import { AtmComponent } from './atm/atm.component';
 import { HistoryComponent } from './history/history.component';
 import { TransferComponent } from './transfer/transfer.component';
 import { AuthService } from './auth.service';
+import { AccountsService } from './accounts.service';
 import { LogInGuard } from './log-in.guard';
 import { LogOutGuard } from './log-out.guard';
 
@@ -51,6 +52,7 @@ import { LogOutGuard } from './log-out.guard';
   providers: [
     HttpClientModule,
     AuthService,
+    AccountsService,
     LogInGuard,
     LogOutGuard
   ],
