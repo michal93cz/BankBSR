@@ -9,6 +9,7 @@ import { IncomingMessage } from "http";
 import User, { UserModel } from "../models/User";
 import { authorize } from "fbgraph";
 import * as _ from "lodash";
+import { RequestPromise } from "request-promise";
 
 // jest to klasa usługi SOAP oferującej obsługę klienta banku
 @SoapService({
@@ -114,22 +115,30 @@ export class SoapBankController {
 
       bankAccount = doc;
 
-      return restBankController.postOutputTransfer(data);
-    })
-    .then((reponseBody) => {
-      const historyEntry: HistoryEntryModel = {
-        operationType: "TRANSFER",
-        title: data.title,
-        amount: -data.amount,
-        balanceAfter: currentBalance,
-        anotherAccountNumber: data.destination_account
-      };
+      restBankController.postOutputTransfer(data, (promise: RequestPromise) => {
+        promise.then((reponseBody) => {
+          const historyEntry: HistoryEntryModel = {
+            operationType: "TRANSFER",
+            title: data.title,
+            amount: -data.amount,
+            balanceAfter: currentBalance,
+            anotherAccountNumber: data.destination_account
+          };
 
-      bankAccount.balance = currentBalance;
-      bankAccount.get("history").push(historyEntry);
-      return bankAccount.save();
+          bankAccount.balance = currentBalance;
+          bankAccount.get("history").push(historyEntry);
+          return bankAccount.save();
+        })
+        .then((doc) => SoapHelper.successResponse(doc.balance, res))
+        .catch((err) => {
+          if (err.statusCode === 401) SoapHelper.failResponse(err.error + " bank", res);
+          else if (err.statusCode === 400) SoapHelper.failResponse(err.error, res);
+          else if (err.statusCode === 404) SoapHelper.failResponse("Account " + err.error, res);
+          else if (!err.statusCode) SoapHelper.failResponse(err.message, res);
+          else SoapHelper.failResponse(err.error, res);
+        });
+      });
     })
-    .then((doc) => SoapHelper.successResponse(doc.balance, res))
     .catch((err) => SoapHelper.failResponse(err.message, res));
   }
 
@@ -167,17 +176,6 @@ export class SoapBankController {
       res({ status: true, history });
     })
     .catch((err) => SoapHelper.failResponse(err.message, res));
-
-    // throw {
-    //   Fault: {
-    //     Code: {
-    //       Value: "soap:Sender",
-    //       Subcode: { value: "rpc:BadArguments" }
-    //     },
-    //     Reason: { Text: "Processing Error" },
-    //     statusCode: 500
-    //   }
-    // };
   }
 
   @SoapOperation(AccountsOutput)

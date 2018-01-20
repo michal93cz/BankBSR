@@ -37,7 +37,7 @@ mongoose.connect(mongoUrl, {useMongoClient: true}).then(
 });
 
 // Express configuration
-app.set("port", process.env.PORT || 3000);
+app.set("port", process.env.PORT || 8081);
 app.use(compression());
 app.use(logger("dev"));
 app.use(bodyParser.json());

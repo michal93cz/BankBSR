@@ -9,6 +9,7 @@ import * as csv from "fast-csv";
 import * as path from "path";
 import User, { UserModel } from "../models/User";
 import * as nrb from "../helpers/nrb";
+import { RequestPromise } from "request-promise";
 
 const authInputConfig = {
     username: process.env.TRANSFER_USERNAME,
@@ -25,7 +26,7 @@ export let postInputTransfer = (req: Request, res: Response) => {
     const credentials = auth(req);
 
     if (!credentials || credentials.name !== authInputConfig.username || credentials.pass !== authInputConfig.password) {
-        res.status(401).send();
+        res.status(401).send("Unauthorized bank");
     }
     // else if (!nrb.isValid(req.body.source_account)) res.status(400).send("Not valid account source number: " + req.body.source_account);
     else if (req.body.amount <= 0 || !Number.isInteger(req.body.amount)) res.status(400).send("Not valid amount");
@@ -37,7 +38,7 @@ export let postInputTransfer = (req: Request, res: Response) => {
           { number: req.params.accountNumber }).exec();
 
       promise.then((doc: BankAccountModel) => {
-        if (!doc) throw new Error("Not found");
+        if (!doc) throw new Error("Account not found");
         doc.balance = doc.balance + req.body.amount;
         const historyEntry: HistoryEntryModel = {
             operationType: "TRANSFER",
@@ -51,17 +52,17 @@ export let postInputTransfer = (req: Request, res: Response) => {
         return doc.save();
       })
       .then((doc) => res.status(201).send())
-      .catch((err) => res.status(404).send());
+      .catch((err) => res.status(404).send(err.message));
     }
 };
 
 // metoda REST wykonania przelewu do zewnętrznego banku
 // na podstawie numeru banku z numeru konta pobierane jest z pliku csv adres banku do którego transferowane są pieniądze
 // metoda zwraca obiekt Promise, który wykonywany jest w metodzie interfejsu SOAP banku
-export let postOutputTransfer = (data: TransferInput) => {
+export let postOutputTransfer = (data: TransferInput, callback: (promise: RequestPromise) => any) => {
     const accountToNumber = data.destination_account;
     const bankNumber = accountToNumber.substring(2, 10);
-    let bankEndpoint = "http://localhost:3000";
+    let bankEndpoint = "http://localhost:8081";
 
     const csvPath = path.resolve(path.join(__dirname, "../../../banks.csv"));
     const stream = fs.createReadStream(csvPath);
@@ -71,7 +72,6 @@ export let postOutputTransfer = (data: TransferInput) => {
         })
         .on("end", () => {
             bankEndpoint = bankEndpoint.substring(7, bankEndpoint.length);
-            console.log(bankEndpoint);
             const bankUri = "http://" + authOutputConfig.username + ":" + authOutputConfig.password + "@" + bankEndpoint;
             const uri = bankUri + "/accounts/" + accountToNumber + "/history";
             const options = {
@@ -80,7 +80,7 @@ export let postOutputTransfer = (data: TransferInput) => {
                 json: true
             };
 
-            return rp(uri, options);
+            callback(rp(uri, options));
         });
     stream.pipe(csvStream);
 };
@@ -132,8 +132,6 @@ export let getHistory = (req: Request, res: Response) => {
 
     promise.then((doc: BankAccountModel) => {
       if (!doc) res.status(404).send();
-      console.log(doc.history);
-      console.log(credentials.name);
       if (!(doc.owner.username === credentials.name)) res.status(401).send();
 
       res.json(doc.history);
