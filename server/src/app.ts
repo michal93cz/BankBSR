@@ -86,4 +86,6 @@ app.post("/api/accounts", restBankController.newAccount);
 app.get("/api/accounts", restBankController.getAccounts);
 app.get("/api/accounts/:accountNumber/history", restBankController.getHistory);
 
+app.post("/user", restBankController.newUser);
+
 module.exports = app;

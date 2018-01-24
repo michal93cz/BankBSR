@@ -137,3 +137,12 @@ export let getHistory = (req: Request, res: Response) => {
     })
     .catch((err) => res.send(err));
 };
+
+// metoda REST tworzenia uytkownika
+export let newUser = (req: Request, res: Response) => {
+    const user = new User({ username: req.body.username, password: req.body.password });
+    user.save((err: any, user: any) => {
+        if (err) return res.status(500).json(err);
+        else return res.status(201).send();
+    });
+};
